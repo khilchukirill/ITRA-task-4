@@ -1,9 +1,11 @@
-import React from 'react';
-import './App.scss';
-
+import React from "react";
+import "./App.scss";
+import { Registration } from "./components";
 function App() {
   return (
-      <h1>React Works!</h1>
+    <div className="container">
+      <Registration></Registration>
+    </div>
   );
 }
 
