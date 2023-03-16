@@ -1,7 +1,7 @@
 import "./registration.scss";
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { RegFormModel} from "../models";
+import { RegFormModel } from "../models";
 
 export function Registration() {
   const signUpTitle: string = "Sign Up!";
@@ -13,10 +13,10 @@ export function Registration() {
     new RegFormModel("formBasicEmail", "Email address", "email", "Enter email"),
     new RegFormModel("formBasicPassword", "Password", "password", "Password"),
     new RegFormModel(
-        "formConfirmPassword",
-        "Confirm password",
-        "password",
-        "Confirm your password"
+      "formConfirmPassword",
+      "Confirm password",
+      "password",
+      "Confirm your password"
     ),
   ];
 
@@ -24,7 +24,7 @@ export function Registration() {
   const [error, setError] = useState<string>("");
 
   const handleFormFieldChange = (
-      event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
@@ -58,36 +58,36 @@ export function Registration() {
   };
 
   return (
-      <div className="signUp">
-        <h2 className="signUp__title">{signUpTitle}</h2>
-        <Form onSubmit={handleSubmit}>
-          {signUpFormFields.map((signUpFormField) => (
-              <Form.Group
-                  className="mb-3"
-                  controlId={signUpFormField.controlId}
-                  key={signUpFormField.controlId}
-              >
-                <Form.Label>{signUpFormField.formLabel}</Form.Label>
-                <Form.Control
-                    type={signUpFormField.formType}
-                    placeholder={signUpFormField.formPlaceholder}
-                    name={signUpFormField.controlId}
-                    value={formData[signUpFormField.controlId] || ""}
-                    onChange={handleFormFieldChange}
-                />
-              </Form.Group>
-          ))}
-          <Form.Group className="mb-3" controlId="formBasicCheckbox">
-            <Form.Check type="checkbox" label={checkBtn} />
+    <div className="signUp">
+      <h2 className="signUp__title">{signUpTitle}</h2>
+      <Form onSubmit={handleSubmit}>
+        {signUpFormFields.map((signUpFormField) => (
+          <Form.Group
+            className="mb-3"
+            controlId={signUpFormField.controlId}
+            key={signUpFormField.controlId}
+          >
+            <Form.Label>{signUpFormField.formLabel}</Form.Label>
+            <Form.Control
+              type={signUpFormField.formType}
+              placeholder={signUpFormField.formPlaceholder}
+              name={signUpFormField.controlId}
+              value={formData[signUpFormField.controlId] || ""}
+              onChange={handleFormFieldChange}
+            />
           </Form.Group>
-          <Button variant="primary" type="submit" disabled={Boolean(error)}>
-            {submitBtn}
-          </Button>
-          {error && <p className="error-message">{error}</p>}
-        </Form>
-        <a href="/signIn" className="signIn__link">
-          {signInBtn}
-        </a>
-      </div>
+        ))}
+        <Form.Group className="mb-3" controlId="formBasicCheckbox">
+          <Form.Check type="checkbox" label={checkBtn} />
+        </Form.Group>
+        <Button variant="primary" type="submit" disabled={Boolean(error)}>
+          {submitBtn}
+        </Button>
+        {error && <p className="error-message">{error}</p>}
+      </Form>
+      <a href="/signIn" className="signIn__link">
+        {signInBtn}
+      </a>
+    </div>
   );
 }
