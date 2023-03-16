@@ -1,0 +1,5 @@
+{
+  "db": {
+    "url": "postgres://khilchukirill:DTPe9FVqB5v0BYsyzbKo9RMA7k8jp3GP@dpg-cg8vcl9mbg58573rkq8g-a.frankfurt-postgres.render.com/commondb?ssl=true"
+  }
+}

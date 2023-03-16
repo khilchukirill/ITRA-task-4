@@ -1,0 +1,21 @@
+.homePage {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  &__title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 4rem;
+    margin-top: 20vw;
+  }
+  &__wrapper {
+    :first-child {
+      margin-right: 20px;
+    }
+  }
+}
+
+.btn  {
+  font-family: 'Mulish', sans-serif;
+  font-size: 20px;
+}

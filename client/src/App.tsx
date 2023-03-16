@@ -1,11 +1,21 @@
 import React from "react";
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import "./App.scss";
-import { Registration } from "./components";
+import {HomePage} from "./pages/home/homePage";
+import {Auth} from "./components/auth/auth";
+import {Registration} from "./components";
+
 function App() {
   return (
-    <div className="container">
-      <Registration></Registration>
-    </div>
+      <Router>
+              <div className="container">
+                  <Routes>
+                      <Route path='/' element={<HomePage/>}/>
+                      <Route path='/SignIn' element={<Auth/>}/>
+                      <Route path='/SignUp' element={<Registration/>}/>
+                  </Routes>
+              </div>
+      </Router>
   );
 }
 
