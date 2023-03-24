@@ -1,0 +1,1 @@
+export * from "./routeDescr-model";

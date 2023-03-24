@@ -1,6 +1,6 @@
 import "./homePage.scss";
 import Button from "react-bootstrap/Button";
-import { RouteDescrModel } from "../models/routeDescr-model";
+import { RouteDescrModel } from "../models";
 
 export function HomePage() {
   const homePageTitle: string = "Welcome!";

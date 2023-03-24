@@ -1,5 +1,4 @@
 import { Pool } from "pg";
-import * as bcrypt from "bcrypt";
 import { User } from "../models/user.model";
 
 export class UserRepository {
@@ -31,23 +30,16 @@ export class UserRepository {
     }
   }
 
-  async findByEmailAndPassword(
-    email: string,
-    password: string
-  ): Promise<User | null> {
+  async findByEmail(email: string): Promise<User | null> {
     const client = await this.pool.connect();
     try {
       const result = await client.query(
         "SELECT * FROM users WHERE email = $1",
         [email]
       );
-      const user = result.rows[0] as User | null;
-      if (user && (await bcrypt.compare(password, user.password))) {
-        return user;
-      }
-      return null;
+      return result.rows[0] as User | null;
     } catch (error) {
-      console.error("Error in findByEmailAndPassword:", error);
+      console.error("Error in findByEmail:", error);
       return null;
     } finally {
       client.release();
@@ -55,8 +47,6 @@ export class UserRepository {
   }
 
   async create(user: User): Promise<void> {
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(user.password, saltRounds);
     const client = await this.pool.connect();
     try {
       await client.query(
@@ -64,12 +54,15 @@ export class UserRepository {
         [
           user.name,
           user.email,
-          hashedPassword,
+          user.password,
           user.registeredAt,
           user.authorizedAt,
           user.status,
         ]
       );
+    } catch (error) {
+      console.error("Error in create:", error);
+      throw new Error("User creation failed.");
     } finally {
       client.release();
     }

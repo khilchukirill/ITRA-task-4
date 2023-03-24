@@ -1,43 +1,77 @@
 import "./auth.scss";
+import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { RegFormModel } from "../models";
+import { useNavigate } from "react-router-dom";
 
 export function Auth() {
-  const signInTitle: string = "Sign In!";
-  const submitBtn: string = "Submit";
-  const checkBtn: string = "Check me out";
-  const signUpLink: string = "Don`t have an account? Sing Up now!";
+  const [authorized, setAuthorized] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
   const signUpFormFields: Array<RegFormModel> = [
     new RegFormModel("formBasicEmail", "Email address", "email", "Enter email"),
     new RegFormModel("formBasicPassword", "Password", "password", "Password"),
   ];
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const response = await fetch("http://localhost:4000/login/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const token = data.token;
+      setAuthorized(authorized);
+      storeToken(token);
+      navigate("/adminPanel");
+    }
+
+    function storeToken(token: string) {
+      localStorage.setItem("token", token);
+    }
+  };
+
+  const renderFormField = (formField: RegFormModel) => (
+    <Form.Group
+      key={formField.controlId}
+      className="mb-3"
+      controlId={formField.controlId}
+    >
+      <Form.Label>{formField.formLabel}</Form.Label>
+      <Form.Control
+        type={formField.formType}
+        placeholder={formField.formPlaceholder}
+        value={formField.controlId === "formBasicEmail" ? email : password}
+        onChange={(event) =>
+          formField.controlId === "formBasicEmail"
+            ? setEmail(event.target.value)
+            : setPassword(event.target.value)
+        }
+      />
+    </Form.Group>
+  );
+
+  const renderFormFields = () => signUpFormFields.map(renderFormField);
+
   return (
     <div className="signIn signUp">
-      <h2 className="signIn__title signUp__title">{signInTitle}</h2>
-      <Form>
-        {signUpFormFields.map((signUpFormField, i) => (
-          <Form.Group
-            key={i}
-            className="mb-3"
-            controlId={signUpFormField.controlId}
-          >
-            <Form.Label>{signUpFormField.formLabel}</Form.Label>
-            <Form.Control
-              type={signUpFormField.formType}
-              placeholder={signUpFormField.formPlaceholder}
-            />
-          </Form.Group>
-        ))}
-        <Form.Group className="mb-3" controlId="formBasicCheckbox">
-          <Form.Check type="checkbox" label={checkBtn} />
-        </Form.Group>
+      <h2 className="signIn__title signUp__title">Sign In!</h2>
+      <Form onSubmit={handleSubmit}>
+        {renderFormFields()}
         <Button variant="primary" type="submit">
-          {submitBtn}
+          Submit
         </Button>
       </Form>
       <a href="/signUp" className="signUp__link">
-        {signUpLink}
+        Don't have an account? Sign Up now!
       </a>
     </div>
   );

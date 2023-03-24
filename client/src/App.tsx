@@ -4,6 +4,8 @@ import "./App.scss";
 import { HomePage } from "./pages/home/homePage";
 import { Auth } from "./components/auth/auth";
 import { Registration } from "./components";
+import { AdminPanel } from "./pages/adminPanel/adminPanel";
+import { ProtectedRoutes } from "./utils/protectedRoutes";
 
 function App() {
   return (
@@ -13,6 +15,14 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/SignIn" element={<Auth />} />
           <Route path="/SignUp" element={<Registration />} />
+          <Route
+            path="/adminPanel"
+            element={
+              <ProtectedRoutes>
+                <AdminPanel />
+              </ProtectedRoutes>
+            }
+          />
         </Routes>
       </div>
     </Router>

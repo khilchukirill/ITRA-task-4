@@ -1,9 +1,10 @@
 export interface User {
-  id: number;
+  id?: number;
   name: string;
   email: string;
   password: string;
-  registeredAt: Date;
-  authorizedAt: Date;
-  status: string;
+  registeredAt?: string;
+  authorizedAt?: string;
+  status?: string;
+  token?: string;
 }
