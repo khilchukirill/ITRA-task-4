@@ -13,7 +13,7 @@ const pool = new Pool({
   connectionString:
     "postgres://khilchukirill:DTPe9FVqB5v0BYsyzbKo9RMA7k8jp3GP@dpg-cg8vcl9mbg58573rkq8g-a.frankfurt-postgres.render.com/commondb?ssl=true",
 });
-const port = 4000;
+const port = process.env.PORT || 4000;
 app.use(express.json());
 app.use(cors());
 app.use(passport.initialize());
