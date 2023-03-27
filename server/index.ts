@@ -1,4 +1,4 @@
-import { UserController } from "./controllers/UserController";
+import { UserController } from "./controllers/userController";
 import { UserService } from "./services/user.service";
 import { UserRepository } from "./repositories/userRepository";
 import { Pool } from "pg";
