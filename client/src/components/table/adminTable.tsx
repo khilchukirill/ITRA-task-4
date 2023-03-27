@@ -35,7 +35,7 @@ function AdminTable() {
       try {
         const token = getToken();
 
-        const response = await fetch("http://localhost:4000/users/", {
+        const response = await fetch("https://task4-ut47.onrender.com/users/", {
           headers: { Authorization: token },
         });
 
@@ -66,7 +66,7 @@ function AdminTable() {
   };
 
   const handleAction = async (ids: number[], action: string) => {
-    const url = "http://localhost:4000/users/";
+    const url = "https://task4-ut47.onrender.com/users/";
 
     try {
       await Promise.all(

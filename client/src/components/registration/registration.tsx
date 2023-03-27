@@ -9,7 +9,7 @@ export function Registration() {
   const signUpTitle: string = "Sign Up!";
   const submitBtn: string = "Submit";
   const signInBtn: string = "Have an account? Sign In!";
-  const apiUrl = "http://localhost:4000";
+  const apiUrl = "https://task4-ut47.onrender.com/";
   const signUpFormFields: Array<RegFormModel> = [
     new RegFormModel("formBasicName", "Name", "text", "Enter your name"),
     new RegFormModel("formBasicEmail", "Email address", "email", "Enter email"),
