@@ -14,7 +14,7 @@
   "scripts": {
     "migrate": "node-pg-migrate",
     "start": "node index.js",
-    "build": "npm install && npx tsc",
+    "build": "npm install && npm install typescript && npx tsc",
     "dev": "nodemon index.ts"
   },
   "name": "server",
