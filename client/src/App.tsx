@@ -12,8 +12,8 @@ function App() {
       <div className="container">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/SignIn" element={<Auth />} />
-          <Route path="/SignUp" element={<Registration />} />
+          <Route path="/signIn" element={<Auth />} />
+          <Route path="/signUp" element={<Registration />} />
           <Route
             path="/adminPanel"
             element={
