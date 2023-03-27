@@ -4,7 +4,7 @@ export class UserModel {
     public readonly name: string,
     public readonly email: string,
     public readonly registered_at: string,
-    public readonly authorised_at: string,
+    public readonly authorized_at: string,
     public readonly status?: string
   ) {}
 }

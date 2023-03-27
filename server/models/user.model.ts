@@ -6,5 +6,4 @@ export interface User {
   registeredAt?: string;
   authorizedAt?: string;
   status?: string;
-  token?: string;
 }

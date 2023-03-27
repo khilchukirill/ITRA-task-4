@@ -1,9 +1,9 @@
 import "./registration.scss";
 import React, { useState } from "react";
-import moment from "moment";
 import { Button, Form } from "react-bootstrap";
 import { RegFormModel } from "../models";
 import { useNavigate } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 
 export function Registration() {
   const signUpTitle: string = "Sign Up!";
@@ -36,44 +36,26 @@ export function Registration() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const endpoint = `${apiUrl}/users`;
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: formData["formBasicName"],
+        email: formData["formBasicEmail"],
+        password: formData["formBasicPassword"],
+      }),
+    });
 
-    try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData["formBasicName"],
-          email: formData["formBasicEmail"],
-          password: formData["formBasicPassword"],
-          registeredAt: moment().format("DD.MM.YYYY, h:mm:ss"),
-          status: "Active",
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-
-      const loginEndpoint = `${apiUrl}/login`;
-      const loginResponse = await fetch(loginEndpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: formData["formBasicEmail"],
-          password: formData["formBasicPassword"],
-        }),
-      });
-
-      if (!loginResponse.ok) {
-        throw new Error(loginResponse.statusText);
-      }
-
-      const { token } = await loginResponse.json();
+    if (response.ok) {
+      const { token } = await response.json();
+      const decodedToken: { id: string } = jwt_decode(token) as { id: string };
       localStorage.setItem("token", token);
+      localStorage.setItem("userId", decodedToken.id);
       setAuthorized(authorized);
       navigate("/adminPanel");
-    } catch (error) {
-      console.error(error);
+    } else {
+      const { message } = await response.json();
+      setError(message);
     }
   };
 
@@ -100,7 +82,7 @@ export function Registration() {
         <Button variant="primary" type="submit" disabled={Boolean(error)}>
           {submitBtn}
         </Button>
-        {error && <p className="error-message">{error}</p>}
+        {error && <p className="error">{error}</p>}
       </Form>
       <a href="/signIn" className="signIn__link">
         {signInBtn}

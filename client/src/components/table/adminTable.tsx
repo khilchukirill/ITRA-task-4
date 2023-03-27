@@ -1,21 +1,34 @@
 import React, { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
-import { UserModel } from "../models";
+import { useNavigate } from "react-router-dom";
+import { TableButton, UserModel } from "../models";
 import "./table.scss";
 import Button from "react-bootstrap/Button";
 
-const AdminTable = () => {
-  const tableTitles: Array<string> = [
+function AdminTable() {
+  const tableTitles = [
     "ID",
     "Name",
     "Email",
     "Registered",
-    "Authorised",
+    "Authorized",
     "Status",
   ];
+  const buttons = [
+    new TableButton("block", "primary", "Block"),
+    new TableButton("activate", "success", "Unblock"),
+    new TableButton("delete", "danger", "Delete"),
+  ];
+  const navigate = useNavigate();
 
   const [users, setUsers] = useState<UserModel[]>([]);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+
+  const getToken = () => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Token not found");
+    return token;
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -25,6 +38,7 @@ const AdminTable = () => {
         const response = await fetch("http://localhost:4000/users/", {
           headers: { Authorization: token },
         });
+
         if (!response.ok) throw new Error("Failed to fetch users");
 
         const data = await response.json();
@@ -51,62 +65,53 @@ const AdminTable = () => {
     setSelectedRows(isAllSelected ? [] : users.map((user) => user.id));
   };
 
-  const handleAction = async (method: string, status?: string) => {
+  const handleAction = async (ids: number[], action: string) => {
+    const url = "http://localhost:4000/users/";
+
     try {
-      const token = getToken();
-      const promises = selectedRows.map((id) => {
-        const user = users.find((user) => user.id === id);
-        if (!user) throw new Error("user not found");
-        return fetch(`http://localhost:4000/users/${id}`, {
-          method,
-          headers: { Authorization: token },
-          body: JSON.stringify({
-            name: user.name,
-            email: user.email,
-            status,
-          }),
-        });
-      });
-      await Promise.all(promises);
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          selectedRows.includes(user.id) ? { ...user, status: status } : user
-        )
+      await Promise.all(
+        ids.map(async (id) => {
+          const headers = {
+            Authorization: getToken(),
+            "Content-Type": "application/json",
+          };
+          const body = {
+            status: action === "block" ? "Blocked" : "Active",
+          };
+          const method = action === "delete" ? "DELETE" : "PUT";
+
+          const response = await fetch(url + id, {
+            method,
+            headers,
+            body: JSON.stringify(body),
+          });
+
+          if (!response.ok) throw new Error(`Failed to ${action} user`);
+
+          if (action === "delete") {
+            setUsers((users) => users.filter((user) => user.id !== id));
+          } else {
+            setUsers((users) =>
+              users.map((user) =>
+                user.id === id ? { ...user, status: body.status } : user
+              )
+            );
+          }
+
+          if (
+            id === parseInt(localStorage.getItem("userId") || "") &&
+            (action === "delete" || action === "block")
+          ) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("userId");
+            navigate("/signIn");
+          }
+        })
       );
-      setSelectedRows([]);
     } catch (error) {
-      console.error(`Error ${method.toLowerCase()}ing users: ${error}`);
+      console.error(`Error ${action}ing user`, error);
     }
   };
-
-  const handleDeleteUser = async (id: number) => {
-    try {
-      const token = getToken();
-      await fetch(`http://localhost:4000/users/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: token },
-      });
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
-      setSelectedRows([]);
-    } catch (error) {
-      console.error(`Error deleting user: ${error}`);
-    }
-  };
-
-  const getToken = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      throw new Error("Token not found");
-    }
-    return token;
-  };
-
-  const handleDelete = () => {
-    selectedRows.forEach((id) => handleDeleteUser(id));
-  };
-
-  const handleBlock = () => handleAction("PUT", "Blocked");
-  const handleUnblock = () => handleAction("PUT", "Active");
 
   const renderTableHead = () => (
     <thead>
@@ -127,38 +132,40 @@ const AdminTable = () => {
 
   const renderTableBody = () => (
     <tbody>
-      {users.map((user) => (
-        <tr key={user.id} onClick={() => toggleRowSelection(user.id)}>
-          <td>
-            <input
-              type="checkbox"
-              checked={selectedRows.includes(user.id)}
-              onChange={() => toggleRowSelection(user.id)}
-            />
-          </td>
-          <td>{user.id}</td>
-          <td>{user.name}</td>
-          <td>{user.email}</td>
-          <td>{user.registered_at}</td>
-          <td>{user.authorised_at}</td>
-          <td>{user.status}</td>
-        </tr>
-      ))}
+      {users
+        .sort((a, b) => a.id - b.id)
+        .map((user) => (
+          <tr key={user.id}>
+            <td>
+              <input
+                type="checkbox"
+                checked={selectedRows.includes(user.id)}
+                onChange={() => toggleRowSelection(user.id)}
+              />
+            </td>
+            <td>{user.id}</td>
+            <td>{user.name}</td>
+            <td>{user.email}</td>
+            <td>{user.registered_at}</td>
+            <td>{user.authorized_at}</td>
+            <td>{user.status}</td>
+          </tr>
+        ))}
     </tbody>
   );
 
   return (
     <div>
       <div className="btns__wrapper">
-        <Button variant="primary" onClick={handleBlock}>
-          Block
-        </Button>
-        <Button variant="success" onClick={handleUnblock}>
-          Unblock
-        </Button>
-        <Button variant="danger" onClick={handleDelete}>
-          Delete
-        </Button>
+        {buttons.map((button, index) => (
+          <Button
+            key={index}
+            variant={button.variant}
+            onClick={() => handleAction(selectedRows, button.action)}
+          >
+            {button.label}
+          </Button>
+        ))}
       </div>
       <Table striped bordered hover>
         {renderTableHead()}
@@ -166,6 +173,6 @@ const AdminTable = () => {
       </Table>
     </div>
   );
-};
+}
 
 export default AdminTable;

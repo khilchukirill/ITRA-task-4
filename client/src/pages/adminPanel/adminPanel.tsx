@@ -10,6 +10,7 @@ export function AdminPanel() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
     navigate("/signIn");
   };
 
