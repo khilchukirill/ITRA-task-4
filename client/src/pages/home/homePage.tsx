@@ -5,8 +5,8 @@ import { RouteDescrModel } from "../models";
 export function HomePage() {
   const homePageTitle: string = "Welcome!";
   const homePageButtons: Array<RouteDescrModel> = [
-    new RouteDescrModel("/signIn", "Sign in!"),
     new RouteDescrModel("/signUp", "Sign Up!"),
+    new RouteDescrModel("/signIn", "Sign In!"),
   ];
   return (
     <div className="homePage">
