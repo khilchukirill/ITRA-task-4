@@ -78,7 +78,7 @@ export function Auth() {
           Submit
         </Button>
       </Form>
-      <a href="/signUp" className="signUp__link">
+      <a href="/signup" className="signUp__link">
         Don't have an account? Sign Up now!
       </a>
     </div>

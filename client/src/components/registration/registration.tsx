@@ -84,7 +84,7 @@ export function Registration() {
         </Button>
         {error && <p className="error">{error}</p>}
       </Form>
-      <a href="/signIn" className="signIn__link">
+      <a href="/signin" className="signIn__link">
         {signInBtn}
       </a>
     </div>
